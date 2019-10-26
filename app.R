@@ -293,6 +293,9 @@ server <- function(input, output) {
                    curve(dpois(x, lambda = input$pois.lambda), from = 0,
                          to = 20, type = "h", xlab = "x", ylab = "y",
                          main = "Probability Function")
+                   if (input$MEAN) {
+                       abline(v = input$pois.lambda, col = "red")
+                   }
                    curve(ppois(as.integer(x), lambda = input$pois.lambda),
                          from = 0, to = 20, xlab = "x", ylab = "y",
                          main = "Distribution")},
