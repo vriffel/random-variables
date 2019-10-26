@@ -250,6 +250,14 @@ server <- function(input, output) {
                    curve(dlogis(x, location = input$logis.location,
                                 scale = input$logis.scale), from = 5,
                          to = -5, xlab = "x", ylab = "y", main = "Density")
+                   if (input$MEAN) {
+                       exp.logis <- function(x) {
+                           return(x * dlogis(x, location = input$logis.location,
+                                             scale = input$logis.scale))
+                       }
+                       xinter <- integrate(exp.logis, -Inf, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(plogis(x, location = input$logis.location,
                                 scale = input$logis.scale), from = 5,
                          to = -5, xlab = "x", ylab = "y",
