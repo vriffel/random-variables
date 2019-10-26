@@ -282,7 +282,9 @@ server <- function(input, output) {
                                 prob = input$binom.prob),  n = 21,
                          type = "h", from = 0, to = 20, xlab = "x",
                          ylab = "y", main = "Probability Function")
-                   
+                   if (input$MEAN) {
+                       abline(v = input$binom.size * input$binom.prob, col = "red")
+                   }
                    curve(pbinom(x, size = input$binom.size,
                                 prob = input$binom.prob), n = 21,
                          type = "h", from = 0, to = 20, xlab = "x",
