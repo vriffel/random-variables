@@ -176,6 +176,14 @@ server <- function(input, output) {
                    curve(dunif(x, min = input$unif.min,
                                max = input$unif.max), from = -4, to = 4,
                          xlab = "x", ylab = "y", main = "Density")
+                   if(input$MEAN) {
+                       exp.unif <- function(x) {
+                           return(x * dunif(x, min = input$unif.min,
+                                            max = input$unif.max))
+                       }
+                       xinter <- integrate(exp.unif, -Inf, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(punif(x, min = input$unif.min,
                                max = input$unif.max), from = -4, to = 4,
                          xlab = "x", ylab = "y", main = "Distribution")},
