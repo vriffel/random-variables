@@ -266,6 +266,14 @@ server <- function(input, output) {
                    curve(dt(x, df = input$t.df, ncp = input$t.ncp),
                          from = -5, to = 5, xlab = "x", ylab = "y",
                          main = "Density")
+                   if (input$MEAN) {
+                       exp.t <- function(x) {
+                           return(x * dt(x, df = input$t.df,
+                                         ncp = input$t.ncp))
+                       }
+                       xinter <- integrate(exp.t, -Inf, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(pt(x, df = input$t.df, ncp = input$t.ncp),
                          from = -5, to = 5, xlab = "x", ylab = "y",
                          main = "Distribution")},
@@ -274,6 +282,7 @@ server <- function(input, output) {
                                 prob = input$binom.prob),  n = 21,
                          type = "h", from = 0, to = 20, xlab = "x",
                          ylab = "y", main = "Probability Function")
+                   
                    curve(pbinom(x, size = input$binom.size,
                                 prob = input$binom.prob), n = 21,
                          type = "h", from = 0, to = 20, xlab = "x",
