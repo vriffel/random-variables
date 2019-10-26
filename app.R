@@ -132,7 +132,7 @@ server <- function(input, output) {
                    curve(dweibull(x, scale = input$weibull.scale,
                                   shape = input$weibull.shape), from = 0,
                          to = 15, xlab = "x", ylab = "y", main = "Density")
-                   if(input$MEAN) {
+                   if (input$MEAN) {
                        exp.weibull <- function(x) {
                            return(x * dweibull(x, shape = input$weibull.shape,
                                                scale = input$weibull.scale))
@@ -147,7 +147,7 @@ server <- function(input, output) {
                "Chi Square" = {
                    curve(dchisq(x, df = input$chisq.df), from = 0,
                          to = 15, xlab = "x", ylab = "y", main = "Density")
-                   if(input$MEAN) {
+                   if (input$MEAN) {
                        exp.chisq <- function(x) {
                            return(x * dchisq(x, df = input$chisq.df))
                        }
@@ -161,7 +161,7 @@ server <- function(input, output) {
                    curve(dnorm(x, mean = input$norm.mean,
                                sd = input$norm.sd), from = -7, to = 7,
                          xlab = "x", ylab = "y", main = "Density")
-                   if(input$MEAN) {
+                   if (input$MEAN) {
                        exp.norm <- function(x) {
                            return(x * dnorm(x, mean = input$norm.mean,
                                             sd = input$norm.sd))
@@ -176,7 +176,7 @@ server <- function(input, output) {
                    curve(dunif(x, min = input$unif.min,
                                max = input$unif.max), from = -4, to = 4,
                          xlab = "x", ylab = "y", main = "Density")
-                   if(input$MEAN) {
+                   if (input$MEAN) {
                        exp.unif <- function(x) {
                            return(x * dunif(x, min = input$unif.min,
                                             max = input$unif.max))
@@ -190,6 +190,14 @@ server <- function(input, output) {
                "Exponential" ={
                    curve(dexp(x, rate = input$exp.rate), from = 0,
                          to = 3, xlab = "x", ylab = "y", main = "Density")
+                   if (input$MEAN) {
+                       exp.unif <- function(x) {
+                           return(x * dunif(x, min = input$unif.min,
+                                            max = input$unif.max))
+                       }
+                       xinter <- integrate(exp.unif, -Inf, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(pexp(x, rate = input$exp.rate), from = 0,
                          to = 3, xlab = "x", ylab = "y", main = "Distribution")},
                "Cauchy" = {
