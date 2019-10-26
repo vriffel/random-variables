@@ -10,6 +10,7 @@ ui <- fluidPage(
                         "Gosset (T)", "Logistic", "Normal", "Snedecor (F)",
                         "Weibull", "Uniform", "Binomial", "Geometric",
                         "Hypergeometric", "Poisson", "Negative Binomial")),
+        checkboxInput(inputId = "MEAN", label = "Show Mean", value = TRUE),
         conditionalPanel("input.selection == 'Weibull'",
                          sliderInput(inputId = "weibull.shape", label = "Shape",
                                      min = 0.5, max = 8, value = 1,
@@ -134,6 +135,12 @@ server <- function(input, output) {
                    curve(pweibull(x, scale = input$weibull.scale,
                                   shape = input$weibull.shape), xlab = "x",
                          ylab = "y", from = 0, to = 15, main = "Distribution")
+                   if(input$MEAN) {
+                       xinter <- integrate(dweibull(x, scale = input$weibull.scale,
+                                                    shape = input$weibull.shape),
+                                           -Inf, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                },
                "Chi Square" = {
                    curve(dchisq(x, df = input$chisq.df), from = 0,
