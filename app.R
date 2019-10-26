@@ -10,7 +10,7 @@ ui <- fluidPage(
                         "Gosset (T)", "Logistic", "Normal", "Snedecor (F)",
                         "Weibull", "Uniform", "Binomial", "Geometric",
                         "Hypergeometric", "Poisson", "Negative Binomial")),
-        checkboxInput(inputId = "MEAN", label = "Show Mean", value = TRUE),
+        checkboxInput(inputId = "MEAN", label = "Show first mmoment", value = TRUE),
         conditionalPanel("input.selection == 'Weibull'",
                          sliderInput(inputId = "weibull.shape", label = "Shape",
                                      min = 0.5, max = 8, value = 1,
@@ -48,10 +48,10 @@ ui <- fluidPage(
                                      value = 1, step = 0.5)),
         conditionalPanel("input.selection == 'Snedecor (F)'",
                          sliderInput(inputId = "f.df1", label = "DF1",
-                                     min = 1, max = 10, value = 3,
+                                     min = 3, max = 10, value = 3,
                                      step = 1),
                          sliderInput(inputId = "f.df2", label = "DF2",
-                                     min = 1, max = 10, value = 2,
+                                     min = 2, max = 10, value = 2,
                                      step = 1),
                          sliderInput(inputId = "f.ncp", label = "NCP",
                                      min = 1, max = 10, value = 1,
@@ -191,11 +191,10 @@ server <- function(input, output) {
                    curve(dexp(x, rate = input$exp.rate), from = 0,
                          to = 3, xlab = "x", ylab = "y", main = "Density")
                    if (input$MEAN) {
-                       exp.unif <- function(x) {
-                           return(x * dunif(x, min = input$unif.min,
-                                            max = input$unif.max))
+                       exp.exp <- function(x) {
+                           return(x * dexp(x, rate = input$exp.rate))
                        }
-                       xinter <- integrate(exp.unif, -Inf, Inf)$value
+                       xinter <- integrate(exp.exp, -Inf, Inf)$value
                        abline(v = xinter, col = "red")
                    }
                    curve(pexp(x, rate = input$exp.rate), from = 0,
@@ -218,6 +217,14 @@ server <- function(input, output) {
                    curve(dgamma(x, shape = input$gamma.shape,
                                 rate = input$gamma.rate), from = 0,
                          to = 15, xlab = "x", ylab = "y", main = "Density")
+                   if (input$MEAN) {
+                       exp.gamma <- function(x) {
+                           return(x * dgamma(x, shape = input$gamma.shape,
+                                             rate = input$gamma.rate))
+                       }
+                       xinter <- integrate(exp.gamma, -Inf, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(pgamma(x, shape = input$gamma.shape,
                                 rate = input$gamma.rate), from = 0,
                          to = 15, xlab = "x", ylab = "y", main = "Distribution")},
