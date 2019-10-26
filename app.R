@@ -233,6 +233,15 @@ server <- function(input, output) {
                                shape2 = input$beta.shape2,
                                ncp = input$beta.ncp), from = 0, to = 1,
                          xlab = "x", ylab = "y", main = "Density")
+                   if (input$MEAN) {
+                       exp.beta <- function(x) {
+                           return(x * dbeta(x, shape1 = input$beta.shape1,
+                                            shape2 = input$beta.shape2,
+                                            ncp = input$beta.ncp))
+                       }
+                       xinter <- integrate(exp.beta, -Inf, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(pbeta(x, shape1 = input$beta.shape1,
                                shape2 = input$beta.shape2,
                                ncp = input$beta.ncp), from = 0, to = 1,
