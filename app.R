@@ -6,11 +6,16 @@ ui <- fluidPage(
         selectInput(
             inputId = "selection",
             label = "Choose a distribution: ",
-            choices = c("Chi Square", "Normal", "Uniform", "Exponential",
-                        "Cauchy", "Snedecor (F)", "Gamma", "Beta",
-                        "Logistic", "Gosset (T)", "Binomial", "Poisson",
-                        "Geometric", "Hypergeometric",
-                        "Negative Binomial")),
+            choices = c("Beta", "Cauchy", "Chi Square", "Exponential", "Gamma",
+                        "Gosset (T)", "Logistic", "Normal", "Snedecor (F)",
+                        "Weibull", "Uniform", "Binomial", "Geometric",
+                        "Hypergeometric", "Poisson", "Negative Binomial")),
+        conditionalPanel("input.selection == 'Weibull'",
+                         sliderInput(inputId = "weibull.shape", label = "Shape",
+                                     min = 0.5, max = 8, value = 1,
+                                     step = 0.5),
+                         sliderInput(inputId = "weibull.scale", label = "Scale",
+                                     min = 0.5, max = 8, value = 1)),
         conditionalPanel("input.selection == 'Chi Square'",
                          sliderInput(inputId = "chisq.df", label = "DF",
                                      min = 1, max = 5, value = 1,
@@ -109,9 +114,9 @@ ui <- fluidPage(
                          sliderInput(inputId = "nbinom.prob",
                                      label = "Probability", min = 0,
                                      max = 1, value = 0.5, step = 0.05))),
-        mainPanel(
-            plotOutput(outputId = "distPlot")
-        ),
+    mainPanel(
+        plotOutput(outputId = "distPlot")
+    ),
     hr(),
     h5(actionButton("exit", "Exit"), br(), br(), hr(),
        "Created by:"),
@@ -122,6 +127,14 @@ server <- function(input, output) {
     funcInput <- reactive({
         par(mfrow = c(1, 2))
         switch(input$selection,
+               "Weibull" = {
+                   curve(dweibull(x, scale = input$weibull.scale,
+                                  shape = input$weibull.shape), from = 0,
+                         to = 15, xlab = "x", ylab = "y", main = "Density")
+                   curve(pweibull(x, scale = input$weibull.scale,
+                                  shape = input$weibull.shape), xlab = "x",
+                         ylab = "y", from = 0, to = 15, main = "Distribution")
+               },
                "Chi Square" = {
                    curve(dchisq(x, df = input$chisq.df), from = 0,
                          to = 15, xlab = "x", ylab = "y", main = "Density")
