@@ -132,19 +132,28 @@ server <- function(input, output) {
                    curve(dweibull(x, scale = input$weibull.scale,
                                   shape = input$weibull.shape), from = 0,
                          to = 15, xlab = "x", ylab = "y", main = "Density")
+                   if(input$MEAN) {
+                       exp.weibull <- function(x) {
+                           return(x * dweibull(x, shape = input$weibull.shape,
+                                               scale = input$weibull.scale))
+                       }
+                       xinter <- integrate(exp.weibull, 0, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(pweibull(x, scale = input$weibull.scale,
                                   shape = input$weibull.shape), xlab = "x",
                          ylab = "y", from = 0, to = 15, main = "Distribution")
-                   if(input$MEAN) {
-                       xinter <- integrate(dweibull(x, scale = input$weibull.scale,
-                                                    shape = input$weibull.shape),
-                                           -Inf, Inf)$value
-                       abline(v = xinter, col = "red")
-                   }
                },
                "Chi Square" = {
                    curve(dchisq(x, df = input$chisq.df), from = 0,
                          to = 15, xlab = "x", ylab = "y", main = "Density")
+                   if(input$MEAN) {
+                       exp.chisq <- function(x) {
+                           return(x * dchisq(x, df = input$chisq.df))
+                       }
+                       xinter <- integrate(exp.weibull, 0, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(pchisq(x, df = input$chisq.df), from = 0,
                          to = 15, xlab = "x", ylab = "y",
                          main = "Distribution")},
