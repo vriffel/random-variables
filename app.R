@@ -280,31 +280,34 @@ server <- function(input, output) {
                "Binomial" = {
                    curve(dbinom(x, size = input$binom.size,
                                 prob = input$binom.prob),  n = 21,
-                         type = "h", from = 0, to = 20, xlab = "x",
+                         type = "h", from = 0, to = 15, xlab = "x",
                          ylab = "y", main = "Probability Function")
                    if (input$MEAN) {
                        abline(v = input$binom.size * input$binom.prob, col = "red")
                    }
                    curve(pbinom(x, size = input$binom.size,
                                 prob = input$binom.prob), n = 21,
-                         type = "h", from = 0, to = 20, xlab = "x",
+                         type = "h", from = 0, to = 15, xlab = "x",
                          ylab = "y", main = "Distribution")},
                "Poisson" = {
                    curve(dpois(x, lambda = input$pois.lambda), from = 0,
-                         to = 20, type = "h", xlab = "x", ylab = "y",
+                         to = 15, type = "h", xlab = "x", ylab = "y",
                          main = "Probability Function")
                    if (input$MEAN) {
                        abline(v = input$pois.lambda, col = "red")
                    }
                    curve(ppois(as.integer(x), lambda = input$pois.lambda),
-                         from = 0, to = 20, xlab = "x", ylab = "y",
+                         from = 0, to = 15, xlab = "x", ylab = "y",
                          main = "Distribution")},
                "Geometric" = {
                    curve(dgeom(x, prob = input$geom.prob), from = 0,
-                         to = 50, type = "h", xlab = "x", ylab = "y",
+                         to = 20, type = "h", xlab = "x", ylab = "y",
                          main = "Probability Function")
+                   if (input$MEAN) {
+                       abline(v = (1 - input$geom.prob)/input$geom.prob, col = "red")
+                   }
                    curve(pgeom(x, prob = input$geom.prob), from = 0,
-                         to = 50, xlab = "x", ylab = "y",
+                         to = 20, xlab = "x", ylab = "y",
                          main = "Distribution")},
                "Hypergeometric" = {
                    curve(dhyper(x, m = input$hyper.m, n = 10, k = 10),
