@@ -151,7 +151,7 @@ server <- function(input, output) {
                        exp.chisq <- function(x) {
                            return(x * dchisq(x, df = input$chisq.df))
                        }
-                       xinter <- integrate(exp.weibull, 0, Inf)$value
+                       xinter <- integrate(exp.chisq, 0, Inf)$value
                        abline(v = xinter, col = "red")
                    }
                    curve(pchisq(x, df = input$chisq.df), from = 0,
@@ -161,6 +161,14 @@ server <- function(input, output) {
                    curve(dnorm(x, mean = input$norm.mean,
                                sd = input$norm.sd), from = -7, to = 7,
                          xlab = "x", ylab = "y", main = "Density")
+                   if(input$MEAN) {
+                       exp.norm <- function(x) {
+                           return(x * dnorm(x, mean = input$norm.mean,
+                                            sd = input$norm.sd))
+                       }
+                       xinter <- integrate(exp.norm, -Inf, Inf)$value
+                       abline(v = xinter, col = "red")
+                   }
                    curve(pnorm(x, mean = input$norm.mean,
                                sd = input$norm.sd), from = -7, to = 7,
                          xlab = "x", ylab = "y", main = "Distribution")},
