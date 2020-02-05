@@ -8,7 +8,7 @@ ui <- fluidPage(
             label = "Choose a distribution: ",
             choices = c("Beta", "Cauchy", "Chi Square", "Exponential", "Gamma",
                         "Gosset (T)", "Logistic", "Normal", "Snedecor (F)",
-                        "Weibull", "Uniform", "Binomial", "Geometric",
+                        "Weibull", "Lindley", "Uniform", "Binomial", "Geometric",
                         "Hypergeometric", "Poisson", "Negative Binomial")),
         checkboxInput(inputId = "MEAN", label = "Show first mmoment", value = TRUE),
         conditionalPanel("input.selection == 'Weibull'",
@@ -114,7 +114,12 @@ ui <- fluidPage(
                                      step = 1),
                          sliderInput(inputId = "nbinom.prob",
                                      label = "Probability", min = 0,
-                                     max = 1, value = 0.5, step = 0.05))),
+                                     max = 1, value = 0.5, step = 0.05)),
+        conditionalPanel("input.selection == 'Lindley'",
+                         sliderInput(inputId = "theta.lindley",
+                                     label = "theta",
+                                     min = 0.01, max = 10, value = 1,
+                                     step = 0.05))),
     mainPanel(
         plotOutput(outputId = "distPlot")
     ),
@@ -323,7 +328,20 @@ server <- function(input, output) {
                          main = "Probability Function")
                    curve(pnbinom(x, size = input$nbinom.size,
                                  prob = input$nbinom.prob), from = 0, to = 20,
-                         xlab = "x", ylab = "y", main = "Distribution")})
+                         xlab = "x", ylab = "y", main = "Distribution")},
+               "Lindley" =  {
+                   lindley <- function(x, theta) {
+                       fx <- (((theta)^2) / (theta + 1)) * (1 + x) *
+                           exp(-theta * x)}
+                   lindley_cum <- function(x, theta) {
+                       Fx <- sapply(x, function(k) integrate(lindley, 0, k,
+                                                             theta = theta)$value)
+                       }
+                   curve(lindley(x, theta = input$theta.lindley), from = 0,
+                         to = 10, xlab = "x", ylab = "y", main = "Density")
+                   curve(lindley_cum(x, theta = input$theta.lindley), from = 0,
+                         to = 5, xlab = "x", ylab = "y", main = "Distribution")
+               })
     })
     output$distPlot <- renderPlot({
         funcInput()
