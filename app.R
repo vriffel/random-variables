@@ -9,7 +9,7 @@ ui <- fluidPage(
             choices = c("Beta", "Cauchy", "Chi Square", "Exponential", "Gamma",
                         "Gosset (T)", "Logistic", "Normal", "Snedecor (F)",
                         "Weibull", "Lindley", "Uniform", "Binomial", "Geometric",
-                        "Hypergeometric", "Poisson", "Negative Binomial")),
+                        "Hypergeometric", "Poisson", "Negative Binomial", "Discrete Lindley")),
         checkboxInput(inputId = "MEAN", label = "Show first mmoment", value = TRUE),
         conditionalPanel("input.selection == 'Weibull'",
                          sliderInput(inputId = "weibull.shape", label = "Shape",
@@ -119,6 +119,11 @@ ui <- fluidPage(
                          sliderInput(inputId = "theta.lindley",
                                      label = "theta",
                                      min = 0.01, max = 10, value = 1,
+                                     step = 0.05)),
+        conditionalPanel("input.selection == 'Discrete Lindley'",
+                         sliderInput(inputId = "discrete.lindley.lambda",
+                                     label = "Lambda",
+                                     min = 0, max = 1, value = 0.5,
                                      step = 0.05))),
     mainPanel(
         plotOutput(outputId = "distPlot")
@@ -341,6 +346,28 @@ server <- function(input, output) {
                          to = 10, xlab = "x", ylab = "y", main = "Density")
                    curve(lindley_cum(x, theta = input$theta.lindley), from = 0,
                          to = 5, xlab = "x", ylab = "y", main = "Distribution")
+               },
+               "Discrete Lindley" = {
+                   plindley <- function(x, lambda) {
+                       px <- ((lambda^x) / (1 - log(lambda))) *
+                           (lambda * log(lambda) + (1 - lambda) *
+                            (1 - log(lambda^(x + 1))))
+                       return(px)
+                   }
+                   dlindley <- function(x, lambda) {
+                       Fx <- ((1 - lambda^(x + 1)) + ((2 + x) * lambda^(x + 1) - 1) * log(lambda)) /
+                           (1 - log(lambda))
+                       return(Fx)
+                   }
+                   hlindley <- function(lambda, x) {
+                       Hx <- (lambda * log(lambda) + (lambda - 1) * (log(lambda^(x + 1)) - 1)) /
+                           (1 - (1 + x) * log(lambda))
+                       return(Hx)
+                   }
+                   par(mfrow = c(1, 3))
+                   plot(plindley(x = 1:30, lambda = input$discrete.lindley.lambda), xlab = "x", ylab = "y", main = "Probability")
+                   plot(dlindley(x = 1:30, lambda = input$discrete.lindley.lambda), xlab = "x", ylab = "y", main = "Distribution")
+                   plot(hlindley(x = 1:60, lambda = input$discrete.lindley.lambda), xlab = "x", ylab = "y", main = "Hazard")
                })
     })
     output$distPlot <- renderPlot({
