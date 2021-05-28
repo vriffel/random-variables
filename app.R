@@ -9,7 +9,7 @@ ui <- fluidPage(
             choices = c("Beta", "Cauchy", "Chi Square", "Exponential", "Gamma",
                         "Gosset (T)", "Logistic", "Normal", "Snedecor (F)",
                         "Weibull", "Lindley", "Uniform", "Binomial", "Geometric",
-                        "Hypergeometric", "Poisson", "Negative Binomial", "Discrete Lindley")),
+                        "Hypergeometric", "Poisson", "Negative Binomial", "Discrete Lindley", "ZIP")),
         checkboxInput(inputId = "MEAN", label = "Show first mmoment", value = TRUE),
         conditionalPanel("input.selection == 'Weibull'",
                          sliderInput(inputId = "weibull.shape", label = "Shape",
@@ -124,6 +124,15 @@ ui <- fluidPage(
                          sliderInput(inputId = "discrete.lindley.lambda",
                                      label = "Lambda",
                                      min = 0, max = 1, value = 0.5,
+                                     step = 0.05)),
+        conditionalPanel("input.selection == 'ZIP'",
+                         sliderInput(inputId = "zip.lambda",
+                                     label = "Lambda",
+                                     min = 0, max = 20, value = 0.5,
+                                     step = 0.5),
+                         sliderInput(inputId = "zip.pi",
+                                     label = "Pi",
+                                     min = 0, max = 1, value = 0.1,
                                      step = 0.05))),
     mainPanel(
         plotOutput(outputId = "distPlot")
@@ -368,6 +377,19 @@ server <- function(input, output) {
                    plot(plindley(x = 1:30, lambda = input$discrete.lindley.lambda), xlab = "x", ylab = "y", main = "Probability")
                    plot(dlindley(x = 1:30, lambda = input$discrete.lindley.lambda), xlab = "x", ylab = "y", main = "Distribution")
                    plot(hlindley(x = 1:60, lambda = input$discrete.lindley.lambda), xlab = "x", ylab = "y", main = "Hazard")
+               },
+               "ZIP" = {
+                   x <- 0:30
+                   plot(gamlss.dist::dZIP(x, mu = input$zip.lambda,
+                                          sigma = input$zip.pi), type = "h",
+                        xlab = "x", ylab = "y", main = "Probability Function")
+                   if (input$MEAN) {
+                       abline(v = input$zip.lambda * (1 - input$zip.pi),
+                              col = "red")
+                   }
+                   curve(gamlss.dist::pZIP(x, mu = input$zip.lambda,
+                                 sigma = input$zip.pi), from = 0, to = 30,
+                         xlab = "x", ylab = "y", main = "Distribution")
                })
     })
     output$distPlot <- renderPlot({
